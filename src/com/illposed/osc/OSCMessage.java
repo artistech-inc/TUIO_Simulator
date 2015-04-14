@@ -98,7 +98,7 @@ public class OSCMessage extends OSCPacket {
      * @param stream OscPacketByteArrayConverter
      */
     protected void computeArgumentsByteArray(OSCJavaToByteArrayConverter stream) {
-		// SC starting at version 2.2.10 wants a comma at the beginning
+        // SC starting at version 2.2.10 wants a comma at the beginning
         // of the arguments array.
         stream.write(',');
         if (null == arguments) {

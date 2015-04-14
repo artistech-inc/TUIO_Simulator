@@ -138,7 +138,7 @@ public class OSCJavaToByteArrayConverter {
 		// A big ol' case statement -- what's polymorphism mean, again?
         // I really wish I could extend the base classes!
 
-		// use the appropriate flags to tell SuperCollider what kind of 
+        // use the appropriate flags to tell SuperCollider what kind of 
         // thing it is looking at
         if (Integer.class.equals(c)) {
             stream.write('i');
@@ -172,18 +172,18 @@ public class OSCJavaToByteArrayConverter {
      * @param anArray java.lang.Object[]
      */
     public void writeTypesArray(Object[] array) {
-		// A big ol' case statement in a for loop -- what's polymorphism mean, again?
+        // A big ol' case statement in a for loop -- what's polymorphism mean, again?
         // I really wish I could extend the base classes!
 
         for (int i = 0; i < array.length; i++) {
             if (null == array[i]) {
                 continue;
             }
-			// if the array at i is a type of array write a [
+            // if the array at i is a type of array write a [
             // This is used for nested arguments
             if (array[i].getClass().isArray()) {
                 stream.write('[');
-				// fill the [] with the SuperCollider types corresponding to the object
+                // fill the [] with the SuperCollider types corresponding to the object
                 // (i.e. Object of type String needs -s).
                 writeTypesArray((Object[]) array[i]);
                 // close the array
@@ -199,7 +199,7 @@ public class OSCJavaToByteArrayConverter {
                 stream.write('F');
                 continue;
             }
-			// go through the array and write the superCollider types as shown in the 
+            // go through the array and write the superCollider types as shown in the 
             // above method. the Classes derived here are used as the arg to the above method
             writeType(array[i].getClass());
         }
@@ -214,7 +214,7 @@ public class OSCJavaToByteArrayConverter {
      * @param vector the collection I am to write out types for
      */
     public void writeTypes(Vector vector) {
-		// A big ol' case statement in a for loop -- what's polymorphism mean, again?
+        // A big ol' case statement in a for loop -- what's polymorphism mean, again?
         // I really wish I could extend the base classes!
 
         Enumeration enm = vector.elements();
@@ -224,11 +224,11 @@ public class OSCJavaToByteArrayConverter {
             if (null == nextObject) {
                 continue;
             }
-			// if the array at i is a type of array write a [
+            // if the array at i is a type of array write a [
             // This is used for nested arguments
             if (nextObject.getClass().isArray()) {
                 stream.write('[');
-				// fill the [] with the SuperCollider types corresponding to the object
+                // fill the [] with the SuperCollider types corresponding to the object
                 // (e.g., Object of type String needs -s).
                 writeTypesArray((Object[]) nextObject);
                 // close the array
@@ -244,7 +244,7 @@ public class OSCJavaToByteArrayConverter {
                 stream.write('F');
                 continue;
             }
-			// go through the array and write the superCollider types as shown in the 
+            // go through the array and write the superCollider types as shown in the 
             // above method. the Classes derived here are used as the arg to the above method
             writeType(nextObject.getClass());
         }

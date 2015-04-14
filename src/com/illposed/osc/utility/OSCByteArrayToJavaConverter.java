@@ -64,7 +64,7 @@ public class OSCByteArrayToJavaConverter {
             //streamPosition++;
             System.arraycopy(bytes, streamPosition, packetBytes, 0, packetLength);
             streamPosition += packetLength;
-			//for (int i = 0; i < packetLength; i++)
+            //for (int i = 0; i < packetLength; i++)
             //	packetBytes[i] = bytes[streamPosition++];
             OSCPacket packet = myConverter.convert(packetBytes, packetLength);
             bundle.addPacket(packet);
@@ -99,7 +99,7 @@ public class OSCByteArrayToJavaConverter {
     private String readString() {
         int strLen = lengthOfCurrentString();
         char[] stringChars = new char[strLen];
-		//System.arraycopy(bytes,streamPosition,stringChars,0,strLen);
+        //System.arraycopy(bytes,streamPosition,stringChars,0,strLen);
         //streamPosition+=strLen;
         for (int i = 0; i < strLen; i++) {
             stringChars[i] = (char) bytes[streamPosition++];
@@ -232,7 +232,7 @@ public class OSCByteArrayToJavaConverter {
      * @return a Date
      */
     private Date readTimeTag() {
-		//byte[] secondBytes = new byte[8];
+        //byte[] secondBytes = new byte[8];
         //byte[] picosecBytes = new byte[8];
 		/*for (int i = 4; i < 8; i++)
          secondBytes[i] = bytes[streamPosition++];
