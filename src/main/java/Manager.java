@@ -1,3 +1,5 @@
+
+
 /*
  TUIO Simulator - part of the reacTIVision project
  http://reactivision.sourceforge.net/
@@ -21,6 +23,7 @@
 
 import java.awt.Point;
 import java.io.File;
+import java.net.URL;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
@@ -33,9 +36,9 @@ import org.w3c.dom.NodeList;
 
 public class Manager {
 
-    public static final String slash = System.getProperty("file.separator");
-    public static final String resources = "." + slash + "resources" + slash;
-    private String config_file = resources + "config.xml";
+//    public static final String slash = System.getProperty("file.separator");
+//    public static final String resources = "." + slash + "resources" + slash;
+    private String config_file = "config.xml";
 
     private final float doublePi = (float) (Math.PI * 2);
     private final float halfPi = (float) (Math.PI / 2);
@@ -69,7 +72,7 @@ public class Manager {
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-            doc = docBuilder.parse(new File(config_file));
+            doc = docBuilder.parse(ClassLoader.getSystemClassLoader().getResourceAsStream(config_file));
 
             String docType = doc.getDocumentElement().getNodeName();
             if (!docType.equalsIgnoreCase("tuio")) {
