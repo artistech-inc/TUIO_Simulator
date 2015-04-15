@@ -30,7 +30,7 @@ public class Tangible {
 
     public int fiducial_id;
     public int session_id;
-    public TangibleType type;
+    public final TangibleType type;
 
     public Shape geom;
     public Point2D center;

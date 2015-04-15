@@ -31,10 +31,10 @@ import java.awt.geom.RoundRectangle2D;
 
 public class TangibleType {
 
-    public String name;
-    public String shape;
-    public String hexcolor;
-    public String description;
+    public final String name;
+    public final String shape;
+    public final String hexcolor;
+    public final String description;
 
     public Point2D center;
     public Color color;
@@ -113,8 +113,8 @@ public class TangibleType {
             path.lineTo(0, size / 4);
             path.closePath();
             geom = path;
-            path.closePath();
-            geom = path;
+//            path.closePath();
+//            geom = path;
             center = new Point2D.Float(size / 2, size / 2);
         } else if (shape.equals("ellipse")) {
             geom = new Ellipse2D.Float(0, 0, 3 * size / 4, size);

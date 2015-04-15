@@ -53,9 +53,9 @@ public class Manager {
     public boolean inverty = false;
     public boolean inverta = false;
 
-    public HashMap<Integer, Tangible> objectList = new HashMap<Integer, Tangible>();
-    public HashMap<Integer, Finger> cursorList = new HashMap<Integer, Finger>();
-    public HashMap<String, TangibleType> objectType = new HashMap<String, TangibleType>();
+    public final HashMap<Integer, Tangible> objectMap = new HashMap<Integer, Tangible>();
+    public final HashMap<Integer, Finger> cursorMap = new HashMap<Integer, Finger>();
+    public final HashMap<String, TangibleType> objectTypeMap = new HashMap<String, TangibleType>();
     private final JFrame parent;
 
     public Manager(JFrame parent, String config) {
@@ -100,7 +100,7 @@ public class Manager {
                 String description = ((Element) classNode).getAttribute("description");
 
                 TangibleType type = new TangibleType(name, shape, color, description);
-                objectType.put(type.name, type);
+                objectTypeMap.put(type.name, type);
 
             } catch (Exception e) {
                 System.out.println("error parsing class node");
@@ -119,20 +119,20 @@ public class Manager {
                 float ypos = Float.parseFloat(((Element) objectNode).getAttribute("ypos"));
                 float angle = Float.parseFloat(((Element) objectNode).getAttribute("angle")) / 360 * doublePi + (float) Math.PI;
 
-                TangibleType type = (TangibleType) (objectType.get(typeName));
+                TangibleType type = (TangibleType) (objectTypeMap.get(typeName));
                 StringTokenizer st = new StringTokenizer(fiducialList, ",");
 
                 int sides = st.countTokens();
                 Tangible tangible[] = new Tangible[sides];
                 int fiducial_id = Integer.parseInt(st.nextToken());
                 tangible[0] = new Tangible(session_id, fiducial_id, type, active, xpos, ypos, angle);
-                objectList.put(session_id, tangible[0]);
+                objectMap.put(session_id, tangible[0]);
                 session_id--;
                 if (sides > 1) {
                     for (int face = 1; face < sides; face++) {
                         fiducial_id = Integer.parseInt(st.nextToken());
                         tangible[face] = new Tangible(session_id, fiducial_id, type, false, -100, -100, angle);
-                        objectList.put(session_id, tangible[face]);
+                        objectMap.put(session_id, tangible[face]);
                         session_id--;
                     }
                     for (int face = 0; face < sides; face++) {
@@ -157,23 +157,23 @@ public class Manager {
     }
 
     public final void reset() {
-        cursorList.clear();
-        objectList.clear();
+        cursorMap.clear();
+        objectMap.clear();
         readConfig();
         parent.repaint();
     }
 
     public final void activateObject(int old_id, int session_id) {
 
-        Tangible tangible = objectList.get(old_id);
+        Tangible tangible = objectMap.get(old_id);
         if (!tangible.isActive()) {
             if (verbose) {
                 System.out.println("add obj " + session_id + " " + tangible.fiducial_id);
             }
 
             tangible.activate(session_id);
-            objectList.remove(old_id);
-            objectList.put(session_id, tangible);
+            objectMap.remove(old_id);
+            objectMap.put(session_id, tangible);
 
             parent.repaint();
         }
@@ -216,7 +216,7 @@ public class Manager {
     public final Finger addCursor(int s_id, int x, int y) {
 
         Finger cursor = new Finger(s_id, x, y);
-        cursorList.put(s_id, cursor);
+        cursorMap.put(s_id, cursor);
         parent.repaint();
         return cursor;
     }
@@ -228,11 +228,11 @@ public class Manager {
     }
 
     public final Finger getCursor(int s_id) {
-        return cursorList.get(s_id);
+        return cursorMap.get(s_id);
     }
 
     public final void terminateCursor(Finger cursor) {
-        cursorList.remove(cursor.session_id);
+        cursorMap.remove(cursor.session_id);
         parent.repaint();
     }
 

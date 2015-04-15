@@ -50,22 +50,24 @@ import javax.swing.RepaintManager;
 
 public final class Simulation extends JComponent implements Runnable {
 
-    private Manager manager;
+    private final Manager manager;
     private OSCPortOut oscPort;
 
     private int currentFrame = 0;
     private long lastFrameTime = -1;
     private int session_id = -1;
 
-    private final float halfPi = (float) (Math.PI / 2);
+//    private final float halfPi = (float) (Math.PI / 2);
     private final float doublePi = (float) (Math.PI * 2);
 
-    Shape vision, vision_rectangle, vision_circle;
-    Shape table_border, table, table_rectangle, table_circle;
-    private Stroke normalStroke = new BasicStroke(2.0f);
-    private Stroke borderStroke = new BasicStroke(8.0f);
-    private Color borderColor = new Color(0, 200, 0);
-    private Stroke gestureStroke = new BasicStroke(1.0f);
+    private Shape vision;
+    private final Shape vision_rectangle, vision_circle;
+    private Shape table;
+    private final Shape table_border, table_rectangle, table_circle;
+    private final Stroke normalStroke = new BasicStroke(2.0f);
+//    private Stroke borderStroke = new BasicStroke(8.0f);
+//    private Color borderColor = new Color(0, 200, 0);
+    private final Stroke gestureStroke = new BasicStroke(1.0f);
 
     Tangible selectedObject = null;
     Finger selectedCursor = null;
@@ -74,25 +76,25 @@ public final class Simulation extends JComponent implements Runnable {
     int clickX = 0;
     int clickY = 0;
 
-    ArrayList<Integer> stickyCursors = new ArrayList<Integer>();
-    ArrayList<Integer> jointCursors = new ArrayList<Integer>();
+    private final ArrayList<Integer> stickyCursors = new ArrayList<Integer>();
+    private final ArrayList<Integer> jointCursors = new ArrayList<Integer>();
 
-    boolean showName = false;
-    int nameId, nameX, nameY;
-    String objectName = "";
+    private boolean showName = false;
+    private int nameId, nameX, nameY;
+    private String objectName = "";
 
     private boolean running = false;
 
-    int window_width = TuioSimulator.width;
-    int window_height = TuioSimulator.height;
-    int table_width = (int) (TuioSimulator.width / 1.25);
-    int table_height = (int) (TuioSimulator.height / 1.25);
-    int border_width = (int) (window_width - table_width) / 2;
-    int border_height = (int) (window_height - table_height) / 2;
+    private int window_width = TuioSimulator.width;
+    private int window_height = TuioSimulator.height;
+    private int table_width = (int) (TuioSimulator.width / 1.25);
+    private int table_height = (int) (TuioSimulator.height / 1.25);
+    private int border_width = (int) (window_width - table_width) / 2;
+    private int border_height = (int) (window_height - table_height) / 2;
 
     private Robot robot = null;
 
-    MouseEvent lastPressedEvent;
+    private MouseEvent lastPressedEvent;
 
     public Simulation(Manager manager, String host, int port) {
         super();
@@ -179,7 +181,7 @@ public final class Simulation extends JComponent implements Runnable {
             table = table_rectangle;
         }
 
-        for (Tangible tangible : manager.objectList.values()) {
+        for (Tangible tangible : manager.objectMap.values()) {
             if (vision.contains(tangible.geom.getBounds2D())) {
                 if (!tangible.isActive()) {
                     session_id++;
@@ -239,7 +241,7 @@ public final class Simulation extends JComponent implements Runnable {
         OSCBundle cursorBundle = new OSCBundle();
         OSCMessage aliveMessage = new OSCMessage("/tuio/2Dcur");
         aliveMessage.addArgument("alive");
-        for (Integer s_id : manager.cursorList.keySet()) {
+        for (Integer s_id : manager.cursorMap.keySet()) {
             aliveMessage.addArgument(s_id);
         }
 
@@ -260,7 +262,7 @@ public final class Simulation extends JComponent implements Runnable {
         OSCMessage aliveMessage = new OSCMessage("/tuio/2Dcur");
         aliveMessage.addArgument("alive");
 
-        for (Integer s_id : manager.cursorList.keySet()) {
+        for (Integer s_id : manager.cursorMap.keySet()) {
             aliveMessage.addArgument(s_id);
         }
 
@@ -304,7 +306,7 @@ public final class Simulation extends JComponent implements Runnable {
         OSCMessage aliveMessage = new OSCMessage("/tuio/2Dobj");
         aliveMessage.addArgument("alive");
 
-        for (Tangible test : manager.objectList.values()) {
+        for (Tangible test : manager.objectMap.values()) {
             if (test.isActive()) {
                 aliveMessage.addArgument(test.session_id);
             }
@@ -348,7 +350,7 @@ public final class Simulation extends JComponent implements Runnable {
         OSCMessage aliveMessage = new OSCMessage("/tuio/2Dobj");
         aliveMessage.addArgument("alive");
 
-        for (Tangible tangible : manager.objectList.values()) {
+        for (Tangible tangible : manager.objectMap.values()) {
             if (tangible.isActive()) {
                 aliveMessage.addArgument(tangible.session_id);
             }
@@ -367,7 +369,7 @@ public final class Simulation extends JComponent implements Runnable {
 
     private void completeCursorMessage() {
 
-        ArrayList<OSCMessage> messageList = new ArrayList<OSCMessage>(manager.objectList.size());
+        ArrayList<OSCMessage> messageList = new ArrayList<OSCMessage>(manager.objectMap.size());
 
         OSCMessage frameMessage = new OSCMessage("/tuio/2Dcur");
         frameMessage.addArgument("fseq");
@@ -376,10 +378,10 @@ public final class Simulation extends JComponent implements Runnable {
         OSCMessage aliveMessage = new OSCMessage("/tuio/2Dcur");
         aliveMessage.addArgument("alive");
 
-        for (Integer s_id : manager.cursorList.keySet()) {
+        for (Integer s_id : manager.cursorMap.keySet()) {
             aliveMessage.addArgument(s_id);
 
-            Finger cursor = manager.cursorList.get(s_id);
+            Finger cursor = manager.cursorMap.get(s_id);
             Point point = cursor.getPosition();
 
             float xpos = (point.x - border_width) / (float) table_width;
@@ -430,7 +432,7 @@ public final class Simulation extends JComponent implements Runnable {
 
     private void completeObjectMessage() {
 
-        ArrayList<OSCMessage> messageList = new ArrayList<OSCMessage>(manager.objectList.size());
+        ArrayList<OSCMessage> messageList = new ArrayList<OSCMessage>(manager.objectMap.size());
 
         OSCMessage frameMessage = new OSCMessage("/tuio/2Dobj");
         frameMessage.addArgument("fseq");
@@ -439,7 +441,7 @@ public final class Simulation extends JComponent implements Runnable {
         OSCMessage aliveMessage = new OSCMessage("/tuio/2Dobj");
         aliveMessage.addArgument("alive");
 
-        for (Tangible tangible : manager.objectList.values()) {
+        for (Tangible tangible : manager.objectMap.values()) {
             try {
                 if (tangible.isActive()) {
                     messageList.add(setMessage(tangible));
@@ -545,7 +547,7 @@ public final class Simulation extends JComponent implements Runnable {
         g2.draw(table_circle);
 
         // paint the cursors
-        for (Finger cursor : manager.cursorList.values()) {
+        for (Finger cursor : manager.cursorMap.values()) {
             ArrayList<Point> gesture = cursor.getPath();
             if (gesture.size() > 0) {
                 g2.setPaint(Color.blue);
@@ -565,7 +567,7 @@ public final class Simulation extends JComponent implements Runnable {
         }
 
         // paint the objects
-        for (Tangible tangible : manager.objectList.values()) {
+        for (Tangible tangible : manager.objectMap.values()) {
             // draw the objects
             g2.setPaint(tangible.color);
             g2.fill(tangible.geom);
@@ -631,9 +633,9 @@ public final class Simulation extends JComponent implements Runnable {
      AffineTransform trans = AffineTransform.getTranslateInstance(dx,dy);
      Shape shape = trans.createTransformedShape(pushed.geom);
 
-     Enumeration<Tangible> objectList = manager.objectList.elements();
-     while (objectList.hasMoreElements()) {
-     Tangible tangible = objectList.nextElement();
+     Enumeration<Tangible> objectMap = manager.objectMap.elements();
+     while (objectMap.hasMoreElements()) {
+     Tangible tangible = objectMap.nextElement();
      if ((tangible!=pushed) && (tangible.containsArea(new Area(shape))) && (!tangible.pushed)) {
      dx = tangible.getPosition().x - pushed.getPosition().x;
      dy = tangible.getPosition().y - pushed.getPosition().y;
@@ -718,7 +720,7 @@ public final class Simulation extends JComponent implements Runnable {
                         AffineTransform trans = AffineTransform.getTranslateInstance(dx, dy);
                         Shape shape = trans.createTransformedShape(selectedObject.geom);
 
-                        for (Tangible tangible : manager.objectList.values()) {
+                        for (Tangible tangible : manager.objectMap.values()) {
                             if ((tangible != selectedObject) && (tangible.containsArea(new Area(shape)))) {
                                 if (robot != null) {
                                     robot.mouseMove((int) getLocationOnScreen().getX() + lastX, (int) getLocationOnScreen().getY() + lastY);
@@ -805,7 +807,7 @@ public final class Simulation extends JComponent implements Runnable {
             if (table.contains(pt)) {
 
                 if (manager.collision) {
-                    for (Tangible tangible : manager.objectList.values()) {
+                    for (Tangible tangible : manager.objectMap.values()) {
                         if (tangible.containsPoint(pt.x, pt.y)) {
                             if (robot != null) {
                                 robot.mouseMove((int) getLocationOnScreen().getX() + lastX, (int) getLocationOnScreen().getY() + lastY);
@@ -863,7 +865,7 @@ public final class Simulation extends JComponent implements Runnable {
             if (table.contains(pt)) {
 
                 boolean insideObject = false;
-                for (Tangible tangible : manager.objectList.values()) {
+                for (Tangible tangible : manager.objectMap.values()) {
                     if (tangible.containsPoint(pt.x, pt.y)) {
                         insideObject = true;
                         break;
@@ -896,7 +898,7 @@ public final class Simulation extends JComponent implements Runnable {
             int x = evt.getX();
             int y = evt.getY();
 
-            for (Tangible tangible : manager.objectList.values()) {
+            for (Tangible tangible : manager.objectMap.values()) {
                 if (tangible.containsPoint(x, y)) {
 
                     objectName = tangible.type.description;
@@ -925,7 +927,7 @@ public final class Simulation extends JComponent implements Runnable {
         int x = evt.getX();
         int y = evt.getY();
 
-        for (Tangible tangible : manager.objectList.values()) {
+        for (Tangible tangible : manager.objectMap.values()) {
             if (tangible.containsPoint(x, y)) {
                 selectedObject = tangible;
                 selectedCursor = null;
@@ -938,7 +940,7 @@ public final class Simulation extends JComponent implements Runnable {
             }
         }
 
-        for (Finger cursor : manager.cursorList.values()) {
+        for (Finger cursor : manager.cursorMap.values()) {
             Point point = cursor.getPosition();
             if (point.distance(x, y) < 7) {
 

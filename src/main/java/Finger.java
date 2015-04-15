@@ -26,13 +26,13 @@ public class Finger {
 
     public int session_id;
 
-    private final float pi = (float) Math.PI;
-    private final float halfPi = (float) (Math.PI / 2);
-    private final float doublePi = (float) (Math.PI * 2);
+//    private final float pi = (float) Math.PI;
+//    private final float halfPi = (float) (Math.PI / 2);
+//    private final float doublePi = (float) (Math.PI * 2);
 
     public float xspeed, yspeed, mspeed, maccel;
     private long lastTime;
-    public ArrayList<Point> path;
+    public final ArrayList<Point> path;
 
     public Finger(int s_id, int xpos, int ypos) {
 

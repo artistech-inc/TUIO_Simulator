@@ -31,7 +31,7 @@ public class HelpBrowser extends JFrame implements HyperlinkListener {
 
     private final JScrollPane scrollPane;
     private JEditorPane helpPane;
-    private String helpIndex = "index.html";
+    private final String helpIndex = "index.html";
 
     public HelpBrowser() {
 
