@@ -1,13 +1,12 @@
-/* $Id: OSCByteArrayToJavaConverter.java,v 1.1.1.1 2006/11/13 14:47:29 modin Exp $
+/* $Id: OSCByteArrayToJavaConverter.java,v 1.1.1.1 2006/11/13 14:47:22 modin Exp $
  * Created on 28.10.2003
  */
 package com.illposed.osc.utility;
 
-import com.illposed.osc.OSCBundle;
-import com.illposed.osc.OSCMessage;
-import com.illposed.osc.OSCPacket;
 import java.math.BigInteger;
 import java.util.Date;
+
+import com.illposed.osc.*;
 
 /**
  * @author cramakrishnan
@@ -22,14 +21,17 @@ public class OSCByteArrayToJavaConverter {
     int bytesLength;
     int streamPosition;
 
-    private byte[] intBytes = new byte[4];
-    private byte[] floatBytes = new byte[4];
+    private final byte[] intBytes = new byte[4];
+    private final byte[] floatBytes = new byte[4];
 
-    private byte[] secondBytes = new byte[8];
-    private byte[] picosecBytes = new byte[8];
+    private final byte[] secondBytes = new byte[8];
+    private final byte[] picosecBytes = new byte[8];
 
     /**
      * Helper object for converting from a byte array to Java objects
+     * @param byteArray
+     * @param bytesLength
+     * @return 
      */
     /*public OSCByteArrayToJavaConverter() {
      super();
@@ -59,12 +61,12 @@ public class OSCByteArrayToJavaConverter {
         OSCByteArrayToJavaConverter myConverter = new OSCByteArrayToJavaConverter();
         while (streamPosition < bytesLength) {
             // recursively read through the stream and convert packets you find
-            int packetLength = ((Integer) readInteger()).intValue();
+            int packetLength = ((Integer) readInteger());
             byte[] packetBytes = new byte[packetLength];
             //streamPosition++;
             System.arraycopy(bytes, streamPosition, packetBytes, 0, packetLength);
             streamPosition += packetLength;
-            //for (int i = 0; i < packetLength; i++)
+			//for (int i = 0; i < packetLength; i++)
             //	packetBytes[i] = bytes[streamPosition++];
             OSCPacket packet = myConverter.convert(packetBytes, packetLength);
             bundle.addPacket(packet);
@@ -99,7 +101,7 @@ public class OSCByteArrayToJavaConverter {
     private String readString() {
         int strLen = lengthOfCurrentString();
         char[] stringChars = new char[strLen];
-        //System.arraycopy(bytes,streamPosition,stringChars,0,strLen);
+		//System.arraycopy(bytes,streamPosition,stringChars,0,strLen);
         //streamPosition+=strLen;
         for (int i = 0; i < strLen; i++) {
             stringChars[i] = (char) bytes[streamPosition++];
@@ -161,7 +163,7 @@ public class OSCByteArrayToJavaConverter {
      * @return a Character
      */
     private Object readChar() {
-        return new Character((char) bytes[streamPosition++]);
+        return (char) bytes[streamPosition++];
     }
 
     /**
@@ -187,7 +189,7 @@ public class OSCByteArrayToJavaConverter {
                 + ((floatBytes[1] & 0xFF) << 16)
                 + ((floatBytes[0] & 0xFF) << 24);
 
-        return new Float(Float.intBitsToFloat(floatBits));
+        return Float.intBitsToFloat(floatBits);
     }
 
     /**
@@ -206,7 +208,7 @@ public class OSCByteArrayToJavaConverter {
                 + ((intBytes[1] & 0xFF) << 16)
                 + ((intBytes[0] & 0xFF) << 24);
 
-        return new Integer(intBits);
+        return intBits;
     }
 
     /**
@@ -225,14 +227,14 @@ public class OSCByteArrayToJavaConverter {
                 + ((intBytes[1] & 0xFF) << 16)
                 + ((intBytes[0] & 0xFF) << 24);
 
-        return new Integer(intBits);
+        return intBits;
     }
 
     /**
      * @return a Date
      */
     private Date readTimeTag() {
-        //byte[] secondBytes = new byte[8];
+		//byte[] secondBytes = new byte[8];
         //byte[] picosecBytes = new byte[8];
 		/*for (int i = 4; i < 8; i++)
          secondBytes[i] = bytes[streamPosition++];

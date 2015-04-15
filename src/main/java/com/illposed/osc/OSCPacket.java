@@ -17,11 +17,10 @@
  */
 package com.illposed.osc;
 
-import com.illposed.osc.utility.OSCJavaToByteArrayConverter;
+import com.illposed.osc.utility.*;
 
 public abstract class OSCPacket {
 
-    protected boolean isByteArrayComputed;
     protected byte[] byteArray;
 
     public OSCPacket() {
@@ -45,9 +44,7 @@ public abstract class OSCPacket {
      * @return byte[]
      */
     public byte[] getByteArray() {
-        if (!isByteArrayComputed) {
-            computeByteArray();
-        }
+        computeByteArray();
         return byteArray;
     }
 

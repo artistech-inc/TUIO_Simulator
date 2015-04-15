@@ -9,21 +9,17 @@
  * An simple (non-bundle) OSC message. An OSC message is made up of an address
  * (who is this message sent to) and arguments (what is the contents of this
  * message).
- *
- * Internally, I use Vector to maintain jdk1.1 compatability
- *
  */
 package com.illposed.osc;
 
-import java.util.Enumeration;
-import java.util.Vector;
+import java.util.ArrayList;
 
 import com.illposed.osc.utility.*;
 
 public class OSCMessage extends OSCPacket {
 
     protected String address;
-    protected Vector<Object> arguments;
+    protected ArrayList<Object> arguments;
 
     /**
      * Create an empty OSC Message In order to send this osc message, you need
@@ -31,7 +27,7 @@ public class OSCMessage extends OSCPacket {
      */
     public OSCMessage() {
         super();
-        arguments = new Vector<Object>();
+        arguments = new ArrayList<Object>();
     }
 
     /**
@@ -53,12 +49,12 @@ public class OSCMessage extends OSCPacket {
         super();
         address = newAddress;
         if (null != newArguments) {
-            arguments = new Vector<Object>(newArguments.length);
+            arguments = new ArrayList<Object>(newArguments.length);
             for (int i = 0; i < newArguments.length; i++) {
                 arguments.add(newArguments[i]);
             }
         } else {
-            arguments = new Vector<Object>();
+            arguments = new ArrayList<Object>();
         }
         init();
     }
@@ -98,16 +94,15 @@ public class OSCMessage extends OSCPacket {
      * @param stream OscPacketByteArrayConverter
      */
     protected void computeArgumentsByteArray(OSCJavaToByteArrayConverter stream) {
-        // SC starting at version 2.2.10 wants a comma at the beginning
+		// SC starting at version 2.2.10 wants a comma at the beginning
         // of the arguments array.
         stream.write(',');
         if (null == arguments) {
             return;
         }
         stream.writeTypes(arguments);
-        Enumeration enm = arguments.elements();
-        while (enm.hasMoreElements()) {
-            stream.write(enm.nextElement());
+        for(Object obj : arguments) {
+            stream.write(obj);
         }
     }
 

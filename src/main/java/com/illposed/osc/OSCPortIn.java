@@ -24,12 +24,11 @@
  */
 package com.illposed.osc;
 
+import java.net.*;
 import java.io.IOException;
 import com.illposed.osc.utility.OSCByteArrayToJavaConverter;
 import com.illposed.osc.utility.OSCPacketDispatcher;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import org.apache.commons.logging.LogFactory;
 
 public class OSCPortIn extends OSCPort implements Runnable {
 
@@ -53,21 +52,22 @@ public class OSCPortIn extends OSCPort implements Runnable {
      * @see java.lang.Runnable#run()
      */
     public void run() {
-        byte[] buffer = new byte[1536];
-        DatagramPacket packet = new DatagramPacket(buffer, 1536);
+        //maximum UDP packet size
+        byte[] buffer = new byte[65536];
+        DatagramPacket packet = new DatagramPacket(buffer, 65536);
         while (isListening) {
             try {
-                packet.setLength(1536);
+                packet.setLength(65536);
                 socket.receive(packet);
                 OSCPacket oscPacket = converter.convert(buffer, packet.getLength());
                 dispatcher.dispatchPacket(oscPacket);
             } catch (java.net.SocketException e) {
                 if (isListening) {
-                    e.printStackTrace();
+                    LogFactory.getLog(OSCPortIn.class).fatal(null, e);
                 }
             } catch (IOException e) {
                 if (isListening) {
-                    e.printStackTrace();
+                    LogFactory.getLog(OSCPortIn.class).fatal(null, e);
                 }
             }
         }
@@ -91,6 +91,7 @@ public class OSCPortIn extends OSCPort implements Runnable {
 
     /**
      * Am I listening for packets?
+     * @return 
      */
     public boolean isListening() {
         return isListening;
@@ -110,6 +111,7 @@ public class OSCPortIn extends OSCPort implements Runnable {
      * Close the socket and free-up resources. It's recommended that clients
      * call this when they are done with the port.
      */
+    @Override
     public void close() {
         socket.close();
     }

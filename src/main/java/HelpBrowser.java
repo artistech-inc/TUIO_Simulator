@@ -1,6 +1,3 @@
-
-
-
 /**
  * TUIO Simulator - part of the reacTIVision project
  * http://reactivision.sourceforge.net/
@@ -21,6 +18,7 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
 import java.awt.Color;
 import javax.swing.BorderFactory;
 import javax.swing.JEditorPane;
@@ -31,20 +29,20 @@ import javax.swing.event.HyperlinkListener;
 
 public class HelpBrowser extends JFrame implements HyperlinkListener {
 
-    private JScrollPane scrollPane;
+    private final JScrollPane scrollPane;
     private JEditorPane helpPane;
-    private String helpIndex = "file:resources/index.html";
+    private String helpIndex = "index.html";
 
     public HelpBrowser() {
 
         try {
-            helpPane = new JEditorPane(helpIndex);
+            helpPane = new JEditorPane(ClassLoader.getSystemClassLoader().getResource(helpIndex));
         } catch (Exception e) {
             helpPane = new JEditorPane("text/html", "<h1>error loading documentation ...</h1>");
         }
 
         helpPane.setEditable(false);
-        helpPane.addHyperlinkListener(this);
+        helpPane.addHyperlinkListener((HyperlinkListener) this);
 
         scrollPane = new JScrollPane(helpPane);
         scrollPane.setViewportBorder(BorderFactory.createMatteBorder(10, 10, 10, 10, Color.white));
@@ -56,7 +54,7 @@ public class HelpBrowser extends JFrame implements HyperlinkListener {
 
     public void reset() {
         try {
-            helpPane.setPage(helpIndex);
+            helpPane.setPage(ClassLoader.getSystemClassLoader().getResource(helpIndex));
         } catch (Exception e) {
             helpPane.setText("<h1>error loading documentation ...</h1>");
         }

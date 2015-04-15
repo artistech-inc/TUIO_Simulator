@@ -37,6 +37,7 @@ public class OSCPortOut extends OSCPort {
      *
      * @param newAddress InetAddress
      * @param newPort int
+     * @throws java.net.SocketException
      */
     public OSCPortOut(InetAddress newAddress, int newPort) throws SocketException {
         socket = new DatagramSocket();
@@ -51,6 +52,7 @@ public class OSCPortOut extends OSCPort {
      * @param newAddress InetAddress
      *
      * Default the port to the standard one for SuperCollider
+     * @throws java.net.SocketException
      */
     public OSCPortOut(InetAddress newAddress) throws SocketException {
         this(newAddress, defaultSCOSCPort);
@@ -60,6 +62,8 @@ public class OSCPortOut extends OSCPort {
      * Create an OSCPort that sends to localhost, on the standard SuperCollider
      * port Default the address to localhost Default the port to the standard
      * one for SuperCollider
+     * @throws java.net.UnknownHostException
+     * @throws java.net.SocketException
      */
     public OSCPortOut() throws UnknownHostException, SocketException {
         this(InetAddress.getLocalHost(), defaultSCOSCPort);
@@ -67,6 +71,7 @@ public class OSCPortOut extends OSCPort {
 
     /**
      * @param aPacket OSCPacket
+     * @throws java.io.IOException
      */
     public void send(OSCPacket aPacket) throws IOException {
         byte[] byteArray = aPacket.getByteArray();

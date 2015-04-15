@@ -1,6 +1,3 @@
-
-
-
 /**
  * TUIO Simulator - part of the reacTIVision project
  * http://reactivision.sourceforge.net/
@@ -21,8 +18,9 @@
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
 import java.awt.Point;
-import java.util.Vector;
+import java.util.ArrayList;
 
 public class Finger {
 
@@ -34,14 +32,14 @@ public class Finger {
 
     public float xspeed, yspeed, mspeed, maccel;
     private long lastTime;
-    public Vector<Point> path;
+    public ArrayList<Point> path;
 
     public Finger(int s_id, int xpos, int ypos) {
 
         this.session_id = s_id;
 
-        path = new Vector<Point>();
-        path.addElement(new Point(xpos, ypos));
+        path = new ArrayList<Point>();
+        path.add(new Point(xpos, ypos));
         this.xspeed = 0.0f;
         this.yspeed = 0.0f;
         this.maccel = 0.0f;
@@ -52,7 +50,7 @@ public class Finger {
     public final void update(int xpos, int ypos) {
 
         Point lastPoint = getPosition();
-        path.addElement(new Point(xpos, ypos));
+        path.add(new Point(xpos, ypos));
 
         // time difference in seconds
         long currentTime = System.currentTimeMillis();
@@ -80,10 +78,10 @@ public class Finger {
     }
 
     public final Point getPosition() {
-        return path.lastElement();
+        return path.get(path.size() - 1);
     }
 
-    public final Vector<Point> getPath() {
+    public final ArrayList<Point> getPath() {
         return path;
     }
 

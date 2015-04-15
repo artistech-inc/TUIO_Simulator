@@ -1,5 +1,3 @@
-
-
 /*
  TUIO Simulator - part of the reacTIVision project
  http://reactivision.sourceforge.net/
@@ -22,17 +20,19 @@
  */
 
 import java.awt.Point;
-import java.io.File;
-import java.net.URL;
-import java.util.Hashtable;
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 import javax.swing.JFrame;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.logging.LogFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 public class Manager {
 
@@ -53,10 +53,10 @@ public class Manager {
     public boolean inverty = false;
     public boolean inverta = false;
 
-    public Hashtable<Integer, Tangible> objectList = new Hashtable<Integer, Tangible>();
-    public Hashtable<Integer, Finger> cursorList = new Hashtable<Integer, Finger>();
-    public Hashtable<String, TangibleType> objectType = new Hashtable<String, TangibleType>();
-    private JFrame parent;
+    public HashMap<Integer, Tangible> objectList = new HashMap<Integer, Tangible>();
+    public HashMap<Integer, Finger> cursorList = new HashMap<Integer, Finger>();
+    public HashMap<String, TangibleType> objectType = new HashMap<String, TangibleType>();
+    private final JFrame parent;
 
     public Manager(JFrame parent, String config) {
 
@@ -68,7 +68,7 @@ public class Manager {
     }
 
     private void readConfig() {
-        Document doc = null;
+        Document doc;
         try {
             DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
             DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -79,9 +79,14 @@ public class Manager {
                 System.out.println("error parsing configuration file");
                 return;
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("error reading configuration file");
+        } catch (ParserConfigurationException e) {
+            LogFactory.getLog(Manager.class).fatal("error reading configuration file", e);
+            return;
+        } catch (SAXException e) {
+            LogFactory.getLog(Manager.class).fatal("error reading configuration file", e);
+            return;
+        } catch (IOException e) {
+            LogFactory.getLog(Manager.class).fatal("error reading configuration file", e);
             return;
         }
 
@@ -109,7 +114,7 @@ public class Manager {
                 Node objectNode = objectNodes.item(i);
                 String typeName = ((Element) objectNode).getAttribute("class");
                 String fiducialList = ((Element) objectNode).getAttribute("fiducials");
-                boolean active = new Boolean(((Element) objectNode).getAttribute("active")).booleanValue();
+                boolean active = Boolean.parseBoolean(((Element) objectNode).getAttribute("active"));
                 float xpos = Float.parseFloat(((Element) objectNode).getAttribute("xpos"));
                 float ypos = Float.parseFloat(((Element) objectNode).getAttribute("ypos"));
                 float angle = Float.parseFloat(((Element) objectNode).getAttribute("angle")) / 360 * doublePi + (float) Math.PI;
@@ -145,8 +150,7 @@ public class Manager {
                     }
                 }
             } catch (Exception e) {
-                System.out.println("error parsing object node");
-                e.printStackTrace();
+                LogFactory.getLog(Manager.class).warn("error parsing object node", e);
             }
         }
 
